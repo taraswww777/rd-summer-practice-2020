@@ -1,0 +1,37 @@
+{
+  "name": "rd-summer-practice-2020",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "bootstrap": "4.5.0",
+    "webpack-dev-server": "3.11.0",
+    "css-loader": "3.6.0",
+    "file-loader": "6.0.0",
+    "html-loader": "1.1.0",
+    "html-webpack-plugin": "4.3.0",
+    "jquery": "3.5.1",
+    "sass": "1.26.9",
+    "sass-loader": "9.0.1",
+    "style-loader": "1.2.1",
+    "webpack": "4.43.0",
+    "webpack-cli": "3.3.12"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --open",
+    "dev": "webpack --mode=development --watch",
+    "build": "webpack --mode=development",
+    "build-prod": "webpack --mode=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taraswww777/rd-summer-practice-2020.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/taraswww777/rd-summer-practice-2020/issues"
+  },
+  "homepage": "https://github.com/taraswww777/rd-summer-practice-2020#readme"
+}
