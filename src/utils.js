@@ -33,13 +33,57 @@ const utils = {
             }
         }
 
-        return { width: map.width, height: map.height, cells: unpacked };
+        return {width: map.width, height: map.height, cells: unpacked};
     },
     t: (s, d) => {
         for (let p in d) {
             s = s.replace(new RegExp('{' + p + '}', 'g'), d[p]);
         }
         return s;
+    },
+    createCallbacks: () => ({
+        syncing: $.Callbacks(),
+        synced: $.Callbacks(),
+        captionChanged: $.Callbacks(),
+        timerChanged: $.Callbacks(),
+        mapChanged: $.Callbacks(),
+        teamCaptionChanged: $.Callbacks(),
+        teamLivesChanged: $.Callbacks(),
+        teamCoinsChanged: $.Callbacks(),
+        teamPlayersChanged: $.Callbacks(),
+        playerChanged: $.Callbacks(),
+        statusChanged: $.Callbacks(),
+        invalidGame: $.Callbacks()
+    }),
+    createPlayerFromStats: (stats = {}, existingPlayer = {}) => ({
+        ...existingPlayer,
+        id: stats.userId,
+        name: stats.login,
+        coins: stats.coinsCollected,
+        lives: stats.livesCollected,
+        deaths: stats.deaths,
+        alive: stats.alive,
+        connected: stats.connected,
+        x: stats.location.x,
+        y: stats.location.y,
+    }),
+    createTeamFromStats: (stats = {}) => {
+        const team = {
+            id: stats.teamId,
+            name: stats.name,
+            role: stats.role,
+            lives: stats.currentLives,
+            coins: stats.coinsCollected,
+            winner: stats.winner,
+            players: {},
+        };
+
+        stats.playerStats && stats.playerStats.forEach((playerStat)=>{
+            const player = this.createPlayerFromStats(playerStat);
+            team.players[player.id] = player;
+        });
+
+        return team;
     }
 }
 

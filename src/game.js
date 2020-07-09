@@ -4,57 +4,10 @@
 (function (app, $) {
     (function (game) {
         game.GameState = (function() {
-            function createCallbacks() {
-                return {
-                    syncing: $.Callbacks(),
-                    synced: $.Callbacks(),
-                    captionChanged: $.Callbacks(),
-                    timerChanged: $.Callbacks(),
-                    mapChanged: $.Callbacks(),
-                    teamCaptionChanged: $.Callbacks(),
-                    teamLivesChanged: $.Callbacks(),
-                    teamCoinsChanged: $.Callbacks(),
-                    teamPlayersChanged: $.Callbacks(),
-                    playerChanged: $.Callbacks(),
-                    statusChanged: $.Callbacks(),
-                    invalidGame: $.Callbacks()
-                };
-            }
-
-            function createPlayerFromStats(stats, existingPlayer) {
-                var player = existingPlayer || {};
-                player.id = stats.userId;
-                player.name = stats.login;
-                player.coins = stats.coinsCollected;
-                player.lives = stats.livesCollected;
-                player.deaths = stats.deaths;
-                player.alive = stats.alive;
-                player.connected = stats.connected;
-                player.x = stats.location.x;
-                player.y = stats.location.y;
-                return player;
-            }
-
-            function createTeamFromStats(stats) {
-                var team = {};
-                team.id = stats.teamId;
-                team.name = stats.name;
-                team.role = stats.role;
-                team.lives = stats.currentLives;
-                team.coins = stats.coinsCollected;
-                team.winner = stats.winner;
-                team.players = {};
-                for(var i = 0; i < stats.playerStats.length; i++) {
-                    var player = createPlayerFromStats(stats.playerStats[i]);
-                    team.players[player.id] = player;
-                }
-
-                return team;
-            }
 
             function GameState(gameApi) {
                 this.gameApi = gameApi;
-                this.callbacks = createCallbacks();
+                this.callbacks = utils.createCallbacks();
                 this.game = null;
                 this.name = "";
                 this.owner = {};
@@ -287,7 +240,7 @@
             GameState.prototype.addPlayerFromStats = function (teamId, playerStats) {
                 var team = this.getTeam(teamId);
                 if (team) {
-                    var player = createPlayerFromStats(playerStats);
+                    var player = utils.createPlayerFromStats(playerStats);
                     team.players[player.id] = player;
                     this.callbacks.statusChanged.fire(this.status);
                     this.callbacks.teamPlayersChanged.fire(team);
@@ -297,7 +250,7 @@
             GameState.prototype.updatePlayerStats = function (id, stats) {
                 var player = this.getPlayer(id);
                 if (player) {
-                    createPlayerFromStats(stats, player);
+                    utils.createPlayerFromStats(stats, player);
                     this.callbacks.playerChanged.fire(player);
                     this.callbacks.mapChanged.fire(this.map);
                 }
@@ -351,9 +304,9 @@
                 this.millisecondsToSwitchDate = Date.now();
                 this.switchTimeout = syncData.game.switchTimeout;
                 this.map = utils.unpackMap(syncData.game.map);
-                this.teams.team1 = createTeamFromStats(syncData.game.team1Stats);
+                this.teams.team1 = utils.createTeamFromStats(syncData.game.team1Stats);
                 this.teams[this.teams.team1.id] = this.teams.team1;
-                this.teams.team2 = createTeamFromStats(syncData.game.team2Stats);
+                this.teams.team2 = utils.createTeamFromStats(syncData.game.team2Stats);
                 this.teams[this.teams.team2.id] = this.teams.team2;
 
                 //Reconnect if connection was lost
