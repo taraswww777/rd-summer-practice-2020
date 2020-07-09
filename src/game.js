@@ -1,367 +1,4 @@
 'use strict';
-// utilities
-(function(app) {
-    (function(utils) {
-        utils.getStatusName = function (statusId) {
-            var status = "РћС‚РєСЂС‹С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёСЏ";
-            switch (statusId) {
-                case GameApi.GameStatus.open:
-                    break;
-                case GameApi.GameStatus.ready:
-                    status = "Р“РѕС‚РѕРІР° Рє СЃС‚Р°СЂС‚Сѓ";
-                    break;
-                case GameApi.GameStatus.starting:
-                    status = "РЎС‚Р°СЂС‚СѓРµС‚";
-                    break;
-                case GameApi.GameStatus.inProcess:
-                    status = "Р’ РїСЂРѕС†РµСЃСЃРµ";
-                    break;
-                case GameApi.GameStatus.paused:
-                    status = "РќР° РїР°СѓР·Рµ";
-                    break;
-                case GameApi.GameStatus.canceled:
-                    status = "РћС‚РјРµРЅРµРЅР°";
-                    break;
-                case GameApi.GameStatus.finished:
-                    status = "Р—Р°РІРµСЂС€РµРЅР°";
-                    break;
-                default:
-                    status = "РћС€РёР±РѕС‡РЅС‹Р№ СЃС‚Р°С‚СѓСЃ";
-                    break;
-            }
-            return status;
-        };
-
-        utils.canUserCancelGame = function (gameApi, gameInfo) {
-            if (gameInfo.status === GameApi.GameStatus.canceled &&
-                gameInfo.status === GameApi.GameStatus.finished) {
-                return false;
-            }
-            return gameInfo && gameInfo.owner && gameInfo.owner.id &&
-                gameApi && gameApi.questor && gameApi.questor.user &&
-                (gameApi.questor.user.isAdmin ||
-                    gameInfo.owner.id.toLowerCase() === gameApi.questor.user.id.toLowerCase());
-        };
-
-        utils.unpackMap = function (map) {
-            var i, location;
-            var unpacked = [];
-            var cellCount = map.width * map.height;
-            //fill blanks
-            for (i = 0; i < cellCount; i++) {
-                unpacked.push(GameApi.MapCellType.empty);
-            }
-            for (i = 0; i < map.cells.length; i++) {
-                var cell = map.cells[i];
-                location = cell.location.y * map.width + cell.location.x;
-                if (cell.type !== GameApi.MapCellType.policeRespawn &&
-                    cell.type !== GameApi.MapCellType.thiefRespawn) {
-                    unpacked[location] = cell.type;
-                }
-            }
-
-            return { width: map.width, height: map.height, cells: unpacked };
-        };
-
-        utils.t = function (s, d) {
-            for (var p in d) {
-                s = s.replace(new RegExp('{' + p + '}', 'g'), d[p]);
-            }
-            return s;
-        }
-    })(app.utils = app.utils || {});
-})(window.app = window.app || {});
-
-// game list
-(function(app, $){
-    (function(gameList){
-        gameList.GameTable = (function() {
-            var tableHeader =
-                "<tr>" +
-                "<td colspan='7' class='idx-game-header'>РЎРїРёСЃРѕРє Р°РєС‚РёРІРЅС‹С… РёРіСЂ</td>" +
-                "</tr>" +
-                "<tr class='idx-game-col-header'>" +
-                "<th>РРјСЏ</th>" +
-                "<th>РђРІС‚РѕСЂ</th>" +
-                "<th>РЎРѕР·РґР°РЅР°</th>" +
-                "<th>РЎС‚Р°С‚СѓСЃ</th>" +
-                "<th>РњР°РєСЃ. РџРѕР»./РњРѕС€.</th>" +
-                "<th>РџРѕРґРєР». РџРѕР»./РњРѕС€.</th>" +
-                "<th></th>" +
-                "</tr>";
-            var tableFooter =
-                "<tr>" +
-                "<td colspan='7' class='idx-game-footer'>" +
-                "<a class='idx-create-game-link link-btn' href='newgame.html'>РЎРѕР·РґР°С‚СЊ РРіСЂСѓ</a>" +
-                "</td>" +
-                "</tr>";
-            var tableRow =
-                "<tr class='idx-game-row game-status-{status}'>" +
-                "<td>" +
-                "<a class='idx-game-link' href='game.html?gameId={gameId}'>{name}</a>" +
-                "</td>" +
-                "<td>{owner}</td>" +
-                "<td>{created}</td>" +
-                "<td>{statusName}</td>" +
-                "<td>{maxTeamSize}/{maxTeamSize}</td>" +
-                "<td>{teamPoliceSize}/{teamThiefSize}</td>" +
-                "</tr>";
-            var gameCancel = "<a class='idx-game-cancel' href='#'>Р—Р°РІРµСЂС€РёС‚СЊ</a>";
-
-            function GameTable($table, $loading, $error, gameApi) {
-                this.$table = $table;
-                this.$loading = $loading;
-                this.$error = $error;
-                this.gameApi = gameApi;
-            }
-            GameTable.prototype.addRows = function (testInfo, gameInfos) {
-                this.clear();
-                this.$table.append($(tableHeader));
-                if (testInfo) {
-                    this.addRow(testInfo, true);
-                }
-                if (gameInfos && gameInfos.length > 0) {
-                    for (var i = 0; i < gameInfos.length; i++) {
-                        this.addRow(gameInfos[i], false);
-                    }
-                }
-                this.$table.append($(tableFooter));
-            };
-            GameTable.prototype.addRow = function (gameInfo, test) {
-                var thiefCount = 0;
-                var policeCount = 0;
-                if (gameInfo.team1Stats.role === GameApi.GameTeamRole.thief) {
-                    thiefCount = gameInfo.team1Stats.size;
-                    policeCount = gameInfo.team2Stats.size;
-                }
-                else {
-                    thiefCount = gameInfo.team2Stats.size;
-                    policeCount = gameInfo.team1Stats.size;
-                }
-                var templateData = {
-                    name: gameInfo.name + (test ? " (РўРµСЃС‚РѕРІР°СЏ)" : ""),
-                    status: gameInfo.status,
-                    statusName: app.utils.getStatusName(gameInfo.status),
-                    gameId: test ? "test" : gameInfo.id,
-                    owner: gameInfo.owner.nativeName,
-                    created: new Date(gameInfo.createdAtUTC).toLocaleString(),
-                    maxTeamSize: gameInfo.maxTeamSize,
-                    teamPoliceSize: policeCount,
-                    teamThiefSize: thiefCount
-                };
-                var $row = $(app.utils.t(tableRow, templateData));
-                var $actionsColumn = $("<td/>");
-                if (app.utils.canUserCancelGame(this.gameApi, gameInfo) &&
-                    gameInfo.status !== GameApi.GameStatus.finished &&
-                    gameInfo.status !== GameApi.GameStatus.canceled) {
-                    var $cancelAction = $(gameCancel);
-                    $cancelAction.click(function (event) {
-                        event.preventDefault();
-                        this.cancel(gameInfo.id, test);
-                    }.bind(this));
-                    $actionsColumn.append($cancelAction);
-                } else {
-                    $actionsColumn.html("&nbsp;");
-                }
-                $row.append($actionsColumn);
-                this.$table.append($row);
-            };
-            // Game API
-            GameTable.prototype.load = function () {
-                this.showLoading();
-                var callback = function (testGame, error) {
-                    if (!testGame && error && error.status !== 404) {
-                        this.showError();
-                        return;
-                    }
-                    this.gameApi.games.get(function (games, error) {
-                        if (!games && error) {
-                            this.showError();
-                        } else {
-                            this.addRows(testGame, games);
-                            this.show();
-                        }
-                    }.bind(this));
-                }.bind(this);
-                this.gameApi.games.getTest(callback);
-            };
-            GameTable.prototype.cancel = function (gameId, test) {
-                this.showLoading();
-                var callback = function (result, error) {
-                    if (!result && error) {
-                        this.showError();
-                    }
-                    else {
-                        this.load();
-                    }
-                }.bind(this);
-                if (test) {
-                    this.gameApi.games.cancelTest(callback);
-                }
-                else {
-                    this.gameApi.games.cancel(gameId, callback);
-                }
-            };
-            GameTable.prototype.showLoading = function () {
-                this.$table.addClass("hidden");
-                this.$error.addClass("hidden");
-                this.$loading.removeClass("hidden");
-            };
-            GameTable.prototype.showError = function () {
-                this.$table.addClass("hidden");
-                this.$loading.addClass("hidden");
-                this.$error.removeClass("hidden");
-            };
-            GameTable.prototype.show = function () {
-                this.$loading.addClass("hidden");
-                this.$error.addClass("hidden");
-                this.$table.removeClass("hidden");
-            };
-            GameTable.prototype.clear = function () {
-                this.$table.empty();
-            };
-            return GameTable;
-        })();
-    })(app.gameList = app.gameList || {});
-})(window.app = window.app || {}, $);
-
-// new game form
-(function(app, $) {
-    (function (newGame) {
-        newGame.GameForm = (function(){
-            var mapName = "{name} [{owner}] ({width}x{height}) {{policeCount}:{thiefCount}}";
-            var mapSelectOption = "<option value='{mapId}'>{mapName}</option>";
-
-            function GameForm($form, $formContainer, $mapSelect, $gameListBtn, $createGameBtn,
-                              $loading, $error, gameApi) {
-                this.$form = $form;
-                this.$formContainer = $formContainer;
-                this.$mapSelect = $mapSelect;
-                this.$loading = $loading;
-                this.$error = $error;
-                this.gameApi = gameApi;
-
-                this.bindActions($createGameBtn, $gameListBtn);
-            }
-
-            function getMapName(map) {
-                var templateData = {
-                    name: map.name ,
-                    owner: map.owner.nativeName,
-                    width: map.width,
-                    height: map.height,
-                    policeCount: map.policeCount,
-                    thiefCount: map.thiefCount
-                };
-                return app.utils.t(mapName, templateData);
-            }
-
-            GameForm.prototype.bindActions = function ($createGameBtn, $gameListBtn) {
-                $gameListBtn.click(function (event) {
-                    event.preventDefault();
-                    window.location.replace("index.html");
-                });
-                $createGameBtn.click(function (event) {
-                    event.preventDefault();
-                    this.create();
-                }.bind(this));
-                this.$form.submit(function(event) {
-                    event.preventDefault();
-                    this.create(true);
-                }.bind(this));
-            };
-            GameForm.prototype.create = function (openCreated) {
-                this.showLoading();
-                var gameObj = this.getGameObjectFromForm();
-                var callback = function (game, error) {
-                    if (!game && error) {
-                        this.showError();
-                    }
-                    else {
-                        if (openCreated) {
-                            window.location.replace(
-                                app.utils.t("game.html?gameId={gameId}", {
-                                    gameId: gameObj.test ? "test" : game.id
-                                }));
-                        } else {
-                            //redirect to the game list
-                            window.location.replace("index.html");
-                        }
-                    }
-                }.bind(this);
-                if (gameObj.test) {
-                    this.gameApi.games.createTest(gameObj.game, callback);
-                }
-                else {
-                    this.gameApi.games.create(gameObj.game, callback);
-                }
-            };
-            GameForm.prototype.getGameObjectFromForm = function () {
-                var values = this.$form.serializeArray();
-                var valuesMap = {};
-                $.map(values, function(v) {valuesMap[v.name] = v.value});
-                var test = valuesMap.gtest === "on";
-                var game = {};
-                game.name = valuesMap.gname;
-                game.mapId = valuesMap.gmapid;
-                game.switchTimeout = parseInt(valuesMap.gswitch);
-                game.startupTeamLives = parseInt(valuesMap.glives);
-                game.policeSpeed = parseFloat(valuesMap.gpolicespeed);
-                game.thiefSpeed = parseFloat(valuesMap.gthiefspeed);
-                return {
-                    game: game,
-                    test: test
-                };
-            };
-            GameForm.prototype.loadMaps = function () {
-                this.showLoading();
-                var callback = function(maps, error){
-                    if (!maps && error) {
-                        this.showError();
-                    }
-                    else {
-                        this.addSelectMapOptions(maps);
-                        this.show();
-                    }
-                }.bind(this);
-                this.gameApi.maps.get(callback);
-            };
-            GameForm.prototype.addSelectMapOption = function (map) {
-                var templateData = {
-                    mapId: map.id,
-                    mapName: getMapName(map)
-                };
-                this.$mapSelect.append(app.utils.t(mapSelectOption, templateData));
-            };
-            GameForm.prototype.addSelectMapOptions = function (maps) {
-                this.$mapSelect.empty();
-                if (!maps) {
-                    return;
-                }
-                for(var i = 0; i < maps.length; i++){
-                    this.addSelectMapOption(maps[i]);
-                }
-            };
-            GameForm.prototype.showLoading = function () {
-                this.$formContainer.addClass("hidden");
-                this.$error.addClass("hidden");
-                this.$loading.removeClass("hidden");
-            };
-            GameForm.prototype.showError = function () {
-                this.$formContainer.removeClass("hidden");
-                this.$loading.addClass("hidden");
-                this.$error.removeClass("hidden");
-            };
-            GameForm.prototype.show = function () {
-                this.$loading.addClass("hidden");
-                this.$error.addClass("hidden");
-                this.$formContainer.removeClass("hidden");
-            };
-
-            return GameForm;
-        })();
-    })(app.newGame = app.newGame || {});
-})(window.app = window.app || {}, $);
 
 // game.html State
 (function (app, $) {
@@ -713,7 +350,7 @@
                 this.millisecondsToSwitch = syncData.game.millisecodsToSwitch;
                 this.millisecondsToSwitchDate = Date.now();
                 this.switchTimeout = syncData.game.switchTimeout;
-                this.map = app.utils.unpackMap(syncData.game.map);
+                this.map = utils.unpackMap(syncData.game.map);
                 this.teams.team1 = createTeamFromStats(syncData.game.team1Stats);
                 this.teams[this.teams.team1.id] = this.teams.team1;
                 this.teams.team2 = createTeamFromStats(syncData.game.team2Stats);
@@ -1031,9 +668,9 @@
                 status = status || this.state.status;
                 this.game.$gameCaption
                     .empty()
-                    .append($(app.utils.t(
+                    .append($(utils.t(
                         "<div class='game-caption-name'>{name} <span class='game-caption-status game-caption-status-{status}'>{statusName}</span></div>",
-                        {name: name, status: status, statusName: app.utils.getStatusName(status)})));
+                        {name: name, status: status, statusName: utils.getStatusName(status)})));
             };
             GameView.prototype.setTimer = function (data) {
                 var seconds = data.s;
@@ -1048,14 +685,14 @@
                 }
                 this.game.$switchTimer
                     .empty()
-                    .append(app.utils.t("<span class='{state}'>{m}:{s}</span>",
+                    .append(utils.t("<span class='{state}'>{m}:{s}</span>",
                         {state: timerState, m: minutes, s: seconds}));
             };
             GameView.prototype.getPlayer = function (player) {
                 var status = player.alive ?
                     (player.connected ? "ac" : "ad") :
                     player.connected ? "dc" : "dd";
-                return $(app.utils.t(
+                return $(utils.t(
                     "<div id='player{playerId}' class='game-player game-player-status-{status}'>" +
                     "<span class='game-player-name'>{name}</span>" +
                     " [<span class='game-player-coins'>{coins}</span>;" +
@@ -1090,13 +727,13 @@
                 $team.$container.addClass(role);
                 $team.$caption
                     .empty()
-                    .append(app.utils.t(
+                    .append(utils.t(
                         "<div class='game-team-{role}-caption'>" +
                         "<span class='game-team-name'>{name}</span> " +
                         "<span class='game-team-role game-team-role-{role}'>{roleName}</span>" +
                         "</div>", {
                             role: role,
-                            roleName: team.role === GameApi.GameTeamRole.police ? "РїРѕР»РёС†РёСЏ" : "РјРѕС€РµРЅРЅРёРєРё",
+                            roleName: ROLE_TITLES[team.role] || ROLE_TITLES[team.role],
                             name: team.name
                         }
                     ));
