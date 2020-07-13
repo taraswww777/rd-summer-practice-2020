@@ -128,19 +128,7 @@ go8L3N2Zz4="/>
 <script src="/js/gameApi.js" type="text/javascript"></script>
 <script src="constants.js" type="text/javascript"></script>
 <script src="utils.js" type="text/javascript"></script>
+<script src="gameController.js" type="text/javascript"></script>
 <script src="game.js" type="text/javascript"></script>
-<script type="text/javascript">
-    (function() {
-        var gameApi = new GameApi();
-        gameApi.questor.on("unauthorized", function () {
-            window.location.replace("../login");
-        });
-        gameApi.questor.login();
-        var gameState = new app.game.GameState(gameApi);
-        new app.game.GameView($("#game"), $("#loading"), $("#loadError"), gameState);
-        gameState.request();
-    })();
-
-</script>
 </body>
 </html>
