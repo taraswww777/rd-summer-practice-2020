@@ -35,7 +35,7 @@ const utils = {
 
         return {width: map.width, height: map.height, cells: unpacked};
     },
-    t: (s, d) => {
+    templator: (s, d) => {
         for (let p in d) {
             s = s.replace(new RegExp('{' + p + '}', 'g'), d[p]);
         }
@@ -84,6 +84,35 @@ const utils = {
         });
 
         return team;
+    },
+    reWriteDomElement: (el, content) => {
+        if (!el) return el;
+        el.innerHTML = content;
+        return el;
+    },
+    writeDomElement: (el, content) => {
+        el.innerHTML += content;
+        return el;
+    },
+    removeClasses: (el, classes = []) => {
+        if (!el) return el;
+        const fn = (cl) => el.classList.remove(cl)
+        if (Array.isArray(classes)) {
+            classes.forEach(fn)
+        } else {
+            fn(classes)
+        }
+        return el;
+    },
+    addClasses: (el, classes = []) => {
+        if (!el) return el;
+        const fn = (cl) => el.classList.add(cl)
+        if (Array.isArray(classes)) {
+            classes.forEach(fn)
+        } else {
+            fn(classes)
+        }
+        return el;
     }
 }
 

@@ -6,64 +6,69 @@
 * */
 
 // game.html State
+const $mapCanvas = document.getElementById('gameCanvas');
 
 // game.html UI
 (function (app, $) {
     (function (game) {
-        game.GameView = (function() {
+        game.GameView = (function () {
             function getGame() {
                 return {
-                    $gameCaption: $("#gameCaption"),
-                    $switchTimer: $("#switchTimer"),
+                    $gameCaption: document.getElementById('gameCaption'),
+                    $switchTimer: document.getElementById('switchTimer'),
                     team1: {
-                        $container: $("#team1"),
-                        $caption: $("#team1Caption"),
-                        $players: $("#team1users"),
-                        $lives: $("#team1Lives"),
-                        $coins: $("#team1Coins")
+                        $container: document.getElementById('team1'),
+                        $caption: document.getElementById('team1Caption'),
+                        $players: document.getElementById('team1users'),
+                        $lives: document.getElementById('team1Lives'),
+                        $coins: document.getElementById('team1Coins')
                     },
                     team2: {
-                        $container: $("#team2"),
-                        $caption: $("#team2Caption"),
-                        $players: $("#team2users"),
-                        $lives: $("#team2Lives"),
-                        $coins: $("#team2Coins")
+                        $container: document.getElementById('team2'),
+                        $caption: document.getElementById('team2Caption'),
+                        $players: document.getElementById('team2users'),
+                        $lives: document.getElementById('team2Lives'),
+                        $coins: document.getElementById('team2Coins')
                     },
                     mapBuffer: null,
-                    $mapCanvas: $("#gameCanvas"),
+                    $mapCanvas,
                     mapCellSize: 25
                 };
             }
+
             function getButtons() {
                 return {
-                    $btnGameList: $("#btnGameList"),
-                    $btnStart: $("#btnStart"),
-                    $btnConnect: $("#btnConnect"),
-                    $btnConnectPolice: $("#btnConnectPolice"),
-                    $btnConnectThief: $("#btnConnectThief"),
-                    $btnLeave: $("#btnLeave"),
-                    $btnPause: $("#btnPause"),
-                    $btnCancel: $("#btnCancel")
+                    $btnGameList: document.getElementById("btnGameList"),
+                    $btnStart: document.getElementById("btnStart"),
+                    $btnConnect: document.getElementById("btnConnect"),
+                    $btnConnectPolice: document.getElementById("btnConnectPolice"),
+                    $btnConnectThief: document.getElementById("btnConnectThief"),
+                    $btnLeave: document.getElementById("btnLeave"),
+                    $btnPause: document.getElementById("btnPause"),
+                    $btnCancel: document.getElementById("btnCancel")
                 };
             }
+
             function getImages() {
                 return {
-                    imgHeart: $('#img_heart').get(0),
-                    imgCoin: $('#img_coin').get(0),
-                    imgPolice: $('#img_police').get(0),
-                    imgPoliceSelf: $('#img_police_self').get(0),
-                    imgThief: $('#img_thief').get(0),
-                    imgThiefSelf: $('#img_thief_self').get(0),
-                    imgSwitch: $('#img_switch').get(0)
+                    imgHeart: document.getElementById('img_heart'),
+                    imgCoin: document.getElementById('img_coin'),
+                    imgPolice: document.getElementById('img_police'),
+                    imgPoliceSelf: document.getElementById('img_police_self'),
+                    imgThief: document.getElementById('img_thief'),
+                    imgThiefSelf: document.getElementById('img_thief_self'),
+                    imgSwitch: document.getElementById('img_switch')
                 };
             }
+
             function setMapCanvasSizing($canvas, width, height) {
-                return $canvas
-                    .css("width", width + "px")
-                    .css("height", height + "px")
-                    .attr("width", width + "px")
-                    .attr("height", height + "px");
+                $canvas.style.width = `${width}px`;
+                $canvas.style.height = `${height}px`;
+                $canvas.width = `${width}`;
+                $canvas.height = `${height}`;
+                return $canvas;
             }
+
             function drawMapField(canvas, map, width, height, cellSize) {
                 var ctx = canvas.getContext("2d");
                 ctx.fillStyle = "#FFFFFF";
@@ -77,19 +82,20 @@
                     if (cell === GameApi.MapCellType.wall) {
                         ctx.fillStyle = "#C0C0C0";
                         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-                    }
-                    else {
+                    } else {
                         ctx.fillStyle = "#FFFFFF";
                         ctx.rect(x * cellSize, y * cellSize, cellSize, cellSize);
                         ctx.stroke();
                     }
                 }
             }
+
             function getCanvasBuffer(width, height, map, cellSize) {
-                var canvas = setMapCanvasSizing($("<canvas/>"), width, height).get(0);
+                var canvas = setMapCanvasSizing($mapCanvas, width, height);
                 drawMapField(canvas, map, width, height, cellSize);
                 return canvas;
             }
+
             function getMapCellSize(map) {
                 return map.width <= 20 ? 25 : 15;
             }
@@ -109,9 +115,10 @@
                 this.bindButtons();
 
             }
+
             GameView.prototype.bindEvents = function () {
                 var c = this.state.callbacks;
-                c.captionChanged.add(function (name, status){
+                c.captionChanged.add(function (name, status) {
                     this.setGameCaption(name, status);
                 }.bind(this));
                 c.invalidGame.add(function () {
@@ -150,33 +157,18 @@
                 }.bind(this));
             };
             GameView.prototype.bindButtons = function () {
-                var btns = this.btns;
-                var $lastKey = -1;
-                btns.$btnGameList.click(function () {
-                    window.location.replace("index.html");
-                });
-                btns.$btnStart.click(function () {
-                    this.state.game.start();
-                }.bind(this));
-                btns.$btnConnect.click(function () {
-                    this.state.game.join(GameApi.GameTeamRole.random);
-                }.bind(this));
-                btns.$btnConnectPolice.click(function () {
-                    this.state.game.join(GameApi.GameTeamRole.police);
-                }.bind(this));
-                btns.$btnConnectThief.click(function () {
-                    this.state.game.join(GameApi.GameTeamRole.thief);
-                }.bind(this));
-                btns.$btnLeave.click(function () {
-                    this.state.game.leave();
-                }.bind(this));
-                btns.$btnPause.click(function () {
-                    this.state.game.pause();
-                }.bind(this));
-                btns.$btnCancel.click(function () {
-                    this.state.game.cancel();
-                }.bind(this));
-                $(window).on('keydown', function(event) {
+                const btns = this.btns;
+                let $lastKey = -1;
+                btns.$btnGameList.addEventListener('click', () => window.location.replace("index.html"));
+                btns.$btnStart.addEventListener('click', () => this.state.game.start());
+                btns.$btnConnect.addEventListener('click', () => this.state.game.join(GameApi.GameTeamRole.random));
+                btns.$btnConnectPolice.addEventListener('click', () => this.state.game.join(GameApi.GameTeamRole.police));
+                btns.$btnConnectThief.addEventListener('click', () => this.state.game.join(GameApi.GameTeamRole.thief));
+                btns.$btnLeave.addEventListener('click', () => this.state.game.leave());
+                btns.$btnPause.addEventListener('click', () => this.state.game.pause());
+                btns.$btnCancel.addEventListener('click', () => this.state.game.cancel());
+
+                $(window).on('keydown', function (event) {
                     if ($lastKey === event.keyCode) {
                         return;
                     }
@@ -204,14 +196,14 @@
                     }
                     //console.log(event);
                 }.bind(this));
-                $(window).on('keyup', function() {
+                $(window).on('keyup', function () {
                     $lastKey = -1;
                 }.bind(this));
             };
             GameView.prototype.toggleRotation = function (status) {
                 if (status === GameApi.GameStatus.inProcess) {
                     if (!this.imgRotationTimer) {
-                        this.imgRotationTimer = setInterval(function (){
+                        this.imgRotationTimer = setInterval(function () {
                             this.imgRotationAngle += this.imgRotationPeriod;
                             if (this.imgRotationAngle >= 360) {
                                 this.imgRotationAngle = 0;
@@ -249,7 +241,7 @@
                 ctx.save();
 
                 ctx.translate(x * cellSize + halfCell, y * cellSize + halfCell);
-                ctx.rotate(this.imgRotationAngle * Math.PI/180);
+                ctx.rotate(this.imgRotationAngle * Math.PI / 180);
                 ctx.drawImage(img, 2 - halfCell, 2 - halfCell, cellSize - 4, cellSize - 4);
 
                 ctx.restore();
@@ -272,7 +264,7 @@
                     setMapCanvasSizing(this.game.$mapCanvas, width, height);
                     this.game.mapBuffer = getCanvasBuffer(width, height, map, this.game.mapCellSize);
                 }
-                var ctx = this.game.$mapCanvas.get(0).getContext("2d");
+                var ctx = this.game.$mapCanvas.getContext("2d");
                 var cellSize = this.game.mapCellSize;
                 ctx.drawImage(this.game.mapBuffer, 0, 0);
                 for (var i = 0; i < map.cells.length; i++) {
@@ -290,11 +282,10 @@
             GameView.prototype.setGameCaption = function (name, status) {
                 name = name || this.state.name;
                 status = status || this.state.status;
-                this.game.$gameCaption
-                    .empty()
-                    .append($(utils.t(
-                        "<div class='game-caption-name'>{name} <span class='game-caption-status game-caption-status-{status}'>{statusName}</span></div>",
-                        {name: name, status: status, statusName: utils.getStatusName(status)})));
+                utils.reWriteDomElement(this.game.$gameCaption, utils.templator(
+                    "<div class='game-caption-name'>{name} <span class='game-caption-status game-caption-status-{status}'>{statusName}</span></div>",
+                    {name: name, status: status, statusName: utils.getStatusName(status)})
+                );
             };
             GameView.prototype.setTimer = function (data) {
                 var seconds = data.s;
@@ -307,16 +298,15 @@
                 if (minutes < 10) {
                     minutes = "0" + minutes;
                 }
-                this.game.$switchTimer
-                    .empty()
-                    .append(utils.t("<span class='{state}'>{m}:{s}</span>",
-                        {state: timerState, m: minutes, s: seconds}));
+                utils.reWriteDomElement(this.game.$switchTimer, utils.templator(
+                    "<span class='{state}'>{m}:{s}</span>", {state: timerState, m: minutes, s: seconds})
+                );
             };
             GameView.prototype.getPlayer = function (player) {
                 var status = player.alive ?
                     (player.connected ? "ac" : "ad") :
                     player.connected ? "dc" : "dd";
-                return $(utils.t(
+                return $(utils.templator(
                     "<div id='player{playerId}' class='game-player game-player-status-{status}'>" +
                     "<span class='game-player-name'>{name}</span>" +
                     " [<span class='game-player-coins'>{coins}</span>;" +
@@ -343,33 +333,25 @@
             };
             GameView.prototype.setTeamCaption = function (team, $team) {
                 if (team.winner) {
-                    $team.$container.addClass("game-team-winner");
+                    utils.addClasses($team.$container, 'game-team-winner')
                 }
                 var role = team.role === GameApi.GameTeamRole.police ? "police" : "thief";
-                $team.$container.removeClass("police");
-                $team.$container.removeClass("thief");
-                $team.$container.addClass(role);
-                $team.$caption
-                    .empty()
-                    .append(utils.t(
-                        "<div class='game-team-{role}-caption'>" +
-                        "<span class='game-team-name'>{name}</span> " +
-                        "<span class='game-team-role game-team-role-{role}'>{roleName}</span>" +
-                        "</div>", {
-                            role: role,
-                            roleName: ROLE_TITLES[team.role] || ROLE_TITLES[team.role],
-                            name: team.name
-                        }
-                    ));
+                utils.removeClasses($team.$container, ['police', 'thief'])
+                utils.addClasses($team.$container, role)
+                utils.reWriteDomElement($team.$caption, `<div class='game-team-${role}-caption'>
+                    <span class='game-team-name'>${team.name}</span>
+                    <span class='game-team-role game-team-role-${role}'>${ROLE_TITLES[team.role] || ROLE_TITLES[team.role]}</span>
+                    </div>`
+                );
             };
             GameView.prototype.setTeam = function (team, $team) {
                 this.setTeamCaption(team, $team);
-                $team.$lives.text(team.lives);
-                $team.$coins.text(team.coins);
-                $team.$players.empty();
-                $.each(team.players, function (player) {
-                    $team.$players.append(this.getPlayer(team.players[player]));
-                }.bind(this));
+                utils.reWriteDomElement($team.$lives, team.lives);
+                utils.reWriteDomElement($team.$coins, team.coins);
+                utils.reWriteDomElement($team.$players, '');
+                for (const player in team.players) {
+                    utils.writeDomElement($team.$players, this.getPlayer(player));
+                }
             };
             GameView.prototype.updateTeam = function (team) {
                 var $team = this.getTeam(team);
@@ -381,113 +363,93 @@
             };
             GameView.prototype.updateTeamLives = function (team) {
                 var $team = this.getTeam(team);
-                $team.$lives.text(team.lives);
+                utils.reWriteDomElement($team.$lives, team.lives);
             };
             GameView.prototype.updateTeamCoins = function (team) {
                 var $team = this.getTeam(team);
-                $team.$coins.text(team.coins);
+                utils.reWriteDomElement($team.$coins, team.coins);
             };
             GameView.prototype.setButtons = function (status) {
                 status = status || this.state.status;
-                var btns = this.btns;
+                const btns = this.btns;
                 if (status === GameApi.GameStatus.canceled || status === GameApi.GameStatus.finished) {
-                    btns.$btnStart.addClass("hidden");
-                    btns.$btnLeave.addClass("hidden");
-                    btns.$btnPause.addClass("hidden");
-                    btns.$btnCancel.addClass("hidden");
-                    btns.$btnConnect.addClass("hidden");
-                    btns.$btnConnectThief.addClass("hidden");
-                    btns.$btnConnectPolice.addClass("hidden");
+                    utils.addClasses(btns.$btnStart, 'hidden');
+                    utils.addClasses(btns.$btnLeave, 'hidden');
+                    utils.addClasses(btns.$btnPause, 'hidden');
+                    utils.addClasses(btns.$btnCancel, 'hidden');
+                    utils.addClasses(btns.$btnConnect, 'hidden');
+                    utils.addClasses(btns.$btnConnectThief, 'hidden');
+                    utils.addClasses(btns.$btnConnectPolice, 'hidden');
                     return;
                 }
-                var currentUser = this.state.gameApi.questor.user.id;
-                var isOwner = currentUser === this.state.owner.id;
-                var isAdmin = this.state.gameApi.questor.user.isAdmin;
-                var connected = this.state.getPlayer(currentUser) ? true : false;
+                const currentUser = this.state.gameApi.questor.user.id;
+                const isOwner = currentUser === this.state.owner.id;
+                const isAdmin = this.state.gameApi.questor.user.isAdmin;
+                const connected = this.state.getPlayer(currentUser) ? true : false;
+
+                const initBtnsStartCancel = ()=>{
+                    if (isOwner) {
+                        utils.removeClasses(btns.$btnStart, "hidden");
+                        utils.removeClasses(btns.$btnCancel, "hidden");
+                    } else {
+                        utils.addClasses(btns.$btnStart, "hidden");
+                        if (isAdmin) {
+                            utils.removeClasses(btns.$btnCancel, "hidden");
+                        } else {
+                            utils.addClasses(btns.$btnCancel, "hidden");
+                        }
+                    }
+                }
 
                 if (this.state.status === GameApi.GameStatus.open ||
                     this.state.status === GameApi.GameStatus.ready) {
-                    btns.$btnPause.addClass("hidden");
-                    if (isOwner) {
-                        btns.$btnStart.removeClass("hidden");
-                        btns.$btnCancel.removeClass("hidden");
-                    }
-                    else {
-                        btns.$btnStart.addClass("hidden");
-                        if (isAdmin) {
-                            btns.$btnCancel.removeClass("hidden");
-                        } else {
-                            btns.$btnCancel.addClass("hidden");
-                        }
-                    }
+                    utils.addClasses(btns.$btnPause, "hidden");
+                    initBtnsStartCancel();
+
                     if (connected) {
-                        btns.$btnLeave.removeClass("hidden");
-                        btns.$btnConnect.addClass("hidden");
-                        btns.$btnConnectThief.addClass("hidden");
-                        btns.$btnConnectPolice.addClass("hidden");
-                    }
-                    else {
-                        btns.$btnLeave.addClass("hidden");
-                        btns.$btnConnect.removeClass("hidden");
-                        btns.$btnConnectThief.removeClass("hidden");
-                        btns.$btnConnectPolice.removeClass("hidden");
+                        utils.removeClasses(btns.$btnLeave, "hidden");
+                        utils.addClasses(btns.$btnConnect, "hidden");
+                        utils.addClasses(btns.$btnConnectThief, "hidden");
+                        utils.addClasses(btns.$btnConnectPolice, "hidden");
+                    } else {
+                        utils.addClasses(btns.$btnLeave, "hidden");
+                        utils.removeClasses(btns.$btnConnect, "hidden");
+                        utils.removeClasses(btns.$btnConnectThief, "hidden");
+                        utils.removeClasses(btns.$btnConnectPolice, "hidden");
                     }
                     return;
                 }
+
+                initBtnsStartCancel();
                 if (this.state.status === GameApi.GameStatus.starting ||
                     this.state.status === GameApi.GameStatus.inProcess) {
-                    btns.$btnStart.addClass("hidden");
-                    btns.$btnLeave.addClass("hidden");
-                    btns.$btnConnect.addClass("hidden");
-                    btns.$btnConnectThief.addClass("hidden");
-                    btns.$btnConnectPolice.addClass("hidden");
-                    if (isOwner) {
-                        btns.$btnPause.removeClass("hidden");
-                        btns.$btnCancel.removeClass("hidden");
-                    }
-                    else {
-                        btns.$btnPause.addClass("hidden");
-                        if (isAdmin) {
-                            btns.$btnCancel.removeClass("hidden");
-                        } else {
-                            btns.$btnCancel.addClass("hidden");
-                        }
-                    }
-                }
-                else {
-                    if (isOwner) {
-                        btns.$btnStart.removeClass("hidden");
-                        btns.$btnCancel.removeClass("hidden");
-                    }
-                    else {
-                        btns.$btnStart.addClass("hidden");
-                        if (isAdmin) {
-                            btns.$btnCancel.removeClass("hidden");
-                        } else {
-                            btns.$btnCancel.addClass("hidden");
-                        }
-                    }
-                    btns.$btnPause.addClass("hidden");
-                    btns.$btnLeave.addClass("hidden");
-                    btns.$btnConnect.addClass("hidden");
-                    btns.$btnConnectThief.addClass("hidden");
-                    btns.$btnConnectPolice.addClass("hidden");
+                    utils.addClasses(btns.$btnStart, "hidden");
+                    utils.addClasses(btns.$btnLeave, "hidden");
+                    utils.addClasses(btns.$btnConnect, "hidden");
+                    utils.addClasses(btns.$btnConnectThief, "hidden");
+                    utils.addClasses(btns.$btnConnectPolice, "hidden");
+                } else {
+                    utils.addClasses(btns.$btnPause, "hidden");
+                    utils.addClasses(btns.$btnLeave, "hidden");
+                    utils.addClasses(btns.$btnConnect, "hidden");
+                    utils.addClasses(btns.$btnConnectThief, "hidden");
+                    utils.addClasses(btns.$btnConnectPolice, "hidden");
                 }
             };
             GameView.prototype.showLoading = function () {
-                this.$container.addClass("hidden");
-                this.$error.addClass("hidden");
-                this.$loading.removeClass("hidden");
+                utils.addClasses(this.$container, 'hidden')
+                utils.addClasses(this.$error, 'hidden')
+                utils.removeClasses(this.$loading, 'hidden')
             };
             GameView.prototype.showError = function () {
-                this.$container.addClass("hidden");
-                this.$loading.addClass("hidden");
-                this.$error.removeClass("hidden");
+                utils.addClasses(this.$container, 'hidden')
+                utils.addClasses(this.$loading, 'hidden')
+                utils.removeClasses(this.$error, 'hidden')
             };
             GameView.prototype.show = function () {
-                this.$loading.addClass("hidden");
-                this.$error.addClass("hidden");
-                this.$container.removeClass("hidden");
+                utils.addClasses(this.$loading, 'hidden')
+                utils.addClasses(this.$error, 'hidden')
+                utils.removeClasses(this.$container, 'hidden')
             };
 
             return GameView;
@@ -496,13 +458,16 @@
 })(window.app = window.app || {}, $);
 
 
-(function() {
-    var gameApi = new GameApi();
+(() => {
+    const gameApi = new GameApi();
     gameApi.questor.on("unauthorized", function () {
         window.location.replace("../login");
     });
     gameApi.questor.login();
-    var gameState = new app.game.GameState(gameApi);
-    new app.game.GameView($("#game"), $("#loading"), $("#loadError"), gameState);
+    const gameState = new app.game.GameState(gameApi);
+    const $container = document.getElementById('game');
+    const $loading = document.getElementById('loading');
+    const $error = document.getElementById('loadError');
+    new app.game.GameView($container, $loading, $error, gameState);
     gameState.request();
 })();
