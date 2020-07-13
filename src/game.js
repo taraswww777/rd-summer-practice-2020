@@ -497,12 +497,12 @@
 
 
 (function() {
-    const gameApi = new GameApi();
-    const app = new GameController(gameApi)
-
-    // window.app = app;
-
-    // const gameState = new app.game.GameState(gameApi);
+    var gameApi = new GameApi();
+    gameApi.questor.on("unauthorized", function () {
+        window.location.replace("../login");
+    });
+    gameApi.questor.login();
+    var gameState = new app.game.GameState(gameApi);
     new app.game.GameView($("#game"), $("#loading"), $("#loadError"), gameState);
     gameState.request();
 })();
