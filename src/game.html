@@ -16,47 +16,7 @@
 <body>
 <!-- TODO: Task 0. Построить вёрстку приложения по макету
           используя для сетки bootstrap -->
-<div id="game" class="hidden">
-    <div id="main">
-        <div id="gameCaption"></div>
-        <div id="switchTimer"><span class='game-timer-ok'>00:00</span></div>
-        <div id="team1">
-            <div>
-                <span id="team1Caption" class="teamCaption">Команда 1</span>
-            </div>
-            <div id="team1Stats">
-                <div class="teamLives">Жизни: <span id="team1Lives">0</span></div>
-                <div class="teamCoins">Монеты: <span id="team1Coins">0</span></div>
-            </div>
-            <div id="team1users"></div>
-        </div>
-        <div id="map">
-            <canvas id="gameCanvas"></canvas>
-        </div>
-        <div id="team2">
-            <div>
-                <span id="team2Caption" class="teamCaption">Команда 2</span>
-            </div>
-            <div id="team2Stats">
-                <div class="teamLives">Жизни: <span id="team2Lives">0</span></div>
-                <div class="teamCoins">Монеты: <span id="team2Coins">0</span></div>
-            </div>
-            <div id="team2users"></div>
-        </div>
-    </div>
-    <div id="controls">
-        <button id="btnGameList" class="game-btn">К списку игр</button>
-        <button id="btnStart" class="game-btn hidden">Начать игру</button>
-        <button id="btnConnect" class="game-btn hidden">Подключиться к игре (случайно)</button>
-        <button id="btnConnectPolice" class="game-btn hidden">Подключиться к полиции</button>
-        <button id="btnConnectThief" class="game-btn hidden">Подключиться к мошенникам</button>
-        <button id="btnLeave" class="game-btn hidden">Покинуть игру</button>
-        <button id="btnPause" class="game-btn hidden">Пауза</button>
-        <button id="btnCancel" class="game-btn hidden">Прервать игру</button>
-    </div>
-    <div id="console">
-    </div>
-</div>
+
 <div class="hidden">
     <img id="img_heart"
          src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJzdmdfaGVhcnQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9
@@ -134,12 +94,15 @@ go8L3N2Zz4="/>
 <script src="modernizr.js" type="text/javascript"></script>
 <script src="/js/jquery.js" type="text/javascript"></script>
 <script src="/js/jquery.signalR.js" type="text/javascript"></script>
+<!-- TODO: Раскомментировать при начале работы с сервером -->
 <!--<script src="/js/bootstrap.js" type="text/javascript"></script>-->
 <script src="/js/gameApi.js" type="text/javascript"></script>
+<!-- TODO: Раскомментировать при начале работы с сервером -->
 <!--<script src="sugar-1.4.1.min.js" type="text/javascript"></script>-->
 <script src="constants.js" type="text/javascript"></script>
 <script src="utils.js" type="text/javascript"></script>
 <script src="gameController.js" type="text/javascript"></script>
-<script src="game.js" type="text/javascript"></script>
+<!-- TODO: Раскомментировать при начале работы с сервером -->
+<!--<script src="game.js" type="text/javascript"></script>-->
 </body>
 </html>
