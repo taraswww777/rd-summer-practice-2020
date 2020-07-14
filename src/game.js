@@ -372,7 +372,7 @@ const $imgSwitch = document.getElementById('img_switch');
                 if (minutes < 10) {
                     minutes = "0" + minutes;
                 }
-                utils.reWriteDomElement(this.game.$switchTimer, `<span class='{timerState}'>{minutes}:{seconds}</span>`);
+                utils.reWriteDomElement(this.game.$switchTimer, `<span class='${timerState}'>{minutes}:{seconds}</span>`);
             };
             GameView.prototype.getPlayer = function (player) {
                 const status = player.alive ? (player.connected ? "ac" : "ad") : player.connected ? "dc" : "dd";
