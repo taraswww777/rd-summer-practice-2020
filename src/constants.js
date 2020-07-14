@@ -14,10 +14,10 @@ const ROLE_POLICE_ID = 1
 const ROLE_THIEF_ID = 2
 
 const ROLE_TITLES = {
-    [ROLE_POLICE_ID]:'полиция',
-    [ROLE_THIEF_ID]:'мошенники',
+    [ROLE_POLICE_ID]: 'полиция',
+    [ROLE_THIEF_ID]: 'мошенники',
 }
 
 const DICTIONARY = {
-    createGame:'Создать Игру'
+    createGame: 'Создать Игру'
 }
