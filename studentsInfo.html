@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .title {
+            font-size: 36px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .guide {
+            padding: 0 20px;
+        }
+
+        .guide__line {
+            margin-bottom: 60px;
+        }
+
+        .guide__cell--function {
+            display: inline-block;
+            background: #eee;
+            border-left: 5px solid #3d7e9a;
+            padding: 15px;
+            position: relative;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 1.5;
+            font-family: consolas,monaco,"Andale Mono",monospace;
+            margin-bottom: 20px;
+        }
+
+        .guide__cell--info {
+            line-height: 1.6;
+            font-family: Arial,x-locale-body,sans-serif;
+            margin-left: 20px;
+        }
+
+        .guide__cellLine {
+            margin-bottom: 10px;
+        }
+
+        .guide__cellLine--title {
+            font-weight: bold
+        }
+
+        .code {
+            font-family: Consolas,Lucida Console,Menlo,Monaco,monospace;
+            padding: 2px 4px;
+            background: #f5f2f0;
+            border-radius: 2px;
+        }
+    </style>
+    <title>Usage Guide</title>
+</head>
+<body>
+    <main>
+        <h1 class="title">Краткий справочник по необходимым функциям</h1>
+        <div class="guide">
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">document.getElementById(id);</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">
+                        Возвращает ссылку на элемент по его идентификатору (ID); 
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">id</span>
+                        идентификатор является строкой, которая может быть использована для идентификации элемента;
+                    </div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">setTimeout(func, delay)</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Позволяет задавать вызов функции через заданный период времени.</div>
+                    <div class="guide__cellLine">
+                        <span class="code">func</span>
+                            Функция для исполнения через заданную задержку.
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">delay</span>
+                            Задержка в миллисекундах, 1000 миллисекунд равны 1 секунде.
+                    </div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">element.addEventListener(event, handler);</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Позволяет назначит обработчик события для элемента</div>
+                    <div class="guide__cellLine">
+                        <span class="code">event</span>
+                            Имя события, например click
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">handler</span>
+                            Функция обработки
+                    </div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">setInterval(func, delay)</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Позволяет задавать повторяющийся вызов функции через заданный интервал времени.</div>
+                    <div class="guide__cellLine">
+                        <span class="code">func</span>
+                            Функция для исполнения через заданную задержку.
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">delay</span>
+                            Задержка в миллисекундах, 1000 миллисекунд равны 1 секунде.
+                    </div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">element.innerText</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Своство DOM элемента позволяющее получить/задать текст внутри элемента</div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">element.clientWidth</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Своство DOM элемента в котором содержится ширина элемента</div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">element.clientWidth</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Своство DOM элемента в котором содержится высота элемента</div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">canvas.drawImage(img, x, y, width, height)</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Вывод изображения в заданной позиции на холсте</div>
+                    <div class="guide__cellLine">
+                        <span class="code">img</span>
+                            Изображение для рисования
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">x</span>
+                        Координата X на холсте, куда будет помещено изображение
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">y</span>
+                        Координата Y на холсте, куда будет помещено изображение
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">width</span>
+                        Применяемая ширина изображения
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">height</span>
+                        Применяемая высота изображения
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h1 class="title">GameController API</h1>
+        <div class="guide">
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">gameController.icons</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">
+                        Объект с картинками для иконок
+                    </div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">gameController.user</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Объекст с информацие о текщем пользователе</div>
+                    <div class="guide__cellLine">
+                        Содержит следующие поля:
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">id</span>
+                        идентификатор игрока;
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">isAdmin</span>
+                        является ли пользователь администратором;
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">login</span>
+                        логин пользователя;
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">nativeName</span>
+                        имя пользователя;
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">role</span>
+                        роль пользователя;
+                    </div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">gameController.game</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Объекст с информацие о текущей игре</div>
+                    <div class="guide__cellLine">
+                        Содержит следующие поля:
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">id</span>
+                        идентификатор игры;
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">owner</span>
+                        объект с информацией о пользователе, создавшем игру;
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">team1Stats</span>
+                        объект с информацией о 1 команде(оставшееся количество жизней, набранные очки, ...);
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">team2Stats</span>
+                        объект с информацией о 2 команде(оставшееся количество жизней, набранные очки, ...);
+                    </div>
+                    <div class="guide__cellLine">
+                        <span class="code">switchTimeout</span>
+                    </div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">gameController.log</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Функция для логирования, необходимо написать самостоятельно</div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">gameController.incrementProgress</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">функция для изменения состояния progressBar, необходимо написать самостоятельно</div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">gameController.remainingSwitchTime</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">время, оставшееся до смены ролей в миллисекундах</div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">gameController.displayPlayers</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Функция рисования игрока, необходимо написать самостоятельно</div>
+                </div>
+            </div>
+            <div class="guide__line">
+                <div class="guide__cell guide__cell--function">gameController.displayMap</div>
+                <div class="guide__cell guide__cell--info">
+                    <div class="guide__cellLine guide__cellLine--title">Функция рисования карты, необходимо написать самостоятельно</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
