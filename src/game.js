@@ -372,19 +372,19 @@ const $imgSwitch = document.getElementById('img_switch');
                 if (minutes < 10) {
                     minutes = "0" + minutes;
                 }
-                utils.reWriteDomElement(this.game.$switchTimer, `<span class='${timerState}'>{minutes}:{seconds}</span>`);
+                utils.reWriteDomElement(this.game.$switchTimer, `<span class='${timerState}'>${minutes}:${seconds}</span>`);
             };
             GameView.prototype.getPlayer = function (player) {
                 const status = player.alive ? (player.connected ? "ac" : "ad") : player.connected ? "dc" : "dd";
                 /**
                  * TODO: Task 7. Поменяйте под вашу вёрстку
                  */
-                return $(`<div id='player${player.id}' class='game-player game-player-status-${status}'>
+                return `<div id='player${player.id}' class='game-player game-player-status-${status}'>
                     <span class='game-player-name'>${player.name}</span>
                      [<span class='game-player-coins'>${player.coins}</span>
                     <span class='game-player-lives'>${player.lives}</span>
                     <span class='game-player-deaths'>${player.deaths}</span>]
-                    </div>`);
+                    </div>`;
             };
             GameView.prototype.updatePlayer = function (player) {
                 $("#player" + player.id).replaceWith(this.getPlayer(player));
@@ -413,8 +413,8 @@ const $imgSwitch = document.getElementById('img_switch');
                 utils.reWriteDomElement($team.$lives, team.lives);
                 utils.reWriteDomElement($team.$coins, team.coins);
                 utils.reWriteDomElement($team.$players, '');
-                for (const player in team.players) {
-                    utils.writeDomElement($team.$players, this.getPlayer(player));
+                for (const key in team.players) {
+                    utils.writeDomElement($team.$players, this.getPlayer(team.players[key]));
                 }
             };
             GameView.prototype.updateTeam = function (team) {
